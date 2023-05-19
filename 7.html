@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<style>
+		body {
+			margin: 0;
+		}
+
+		canvas {
+			display: block;
+		}
+	</style>
+</head>
+
+<body>
+	<canvas id="myCanvas"></canvas>
+
+	<script>
+		// Circle class
+		class Circle {
+			constructor(x, y, radius) {
+				this.x = x;
+				this.y = y;
+				this.radius = radius;
+			}
+
+			draw(context) {
+				// Draw the gray circle
+				context.lineWidth = 6;
+				context.strokeStyle = "#e4e6f5";
+				context.beginPath();
+				context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+				context.stroke();
+
+				// Draw the black circle
+				context.lineWidth = 6;
+				context.strokeStyle = "black";
+				const innerRadius = this.radius - 4;
+				context.beginPath();
+				context.arc(this.x, this.y, innerRadius, 0, 2 * Math.PI);
+				context.stroke();
+
+				// Fill the inside of the black circle
+				context.fillStyle = "#fef9cf";
+				context.fill();
+
+				// Draw the squares representing the hours
+				const numSquares = 12;
+				const squareSize = 6;
+				const angleIncrement = (2 * Math.PI) / numSquares;
+				const distanceFromCircle = 0;
+
+				context.fillStyle = "#ff774f"; // Set the color for the squares
+
+				for (let i = 0; i < numSquares; i++) {
+					const angle = i * angleIncrement;
+					const indentFromLine = 6;
+
+					const adjustedRadius = innerRadius - distanceFromCircle - indentFromLine;
+					const squareX = this.x + Math.cos(angle) * adjustedRadius - squareSize / 2;
+					const squareY = this.y + Math.sin(angle) * adjustedRadius - squareSize / 2;
+
+					context.fillRect(squareX, squareY, squareSize, squareSize);
+				}
+
+				// Draw the lines between the squares
+				const lineDistance = innerRadius + 6; // Distance from the inner circle for the lines
+				const lineLength = 5; // Length of the lines
+				const lineThickness = 1; // Thickness of the lines
+
+				context.strokeStyle = "black";
+				context.lineWidth = lineThickness;
+
+				for (let i = 0; i < numSquares; i++) {
+					const startAngle = i * angleIncrement;
+					const endAngle = (i + 1) * angleIncrement;
+
+					const startX = this.x + Math.cos(startAngle) * innerRadius;
+					const startY = this.y + Math.sin(startAngle) * innerRadius;
+					const endX = this.x + Math.cos(endAngle) * innerRadius;
+					const endY = this.y + Math.sin(endAngle) * innerRadius;
+
+					const lineCenterX = (startX + endX) / 2;
+					const lineCenterY = (startY + endY) / 2;
+
+					const lineAngle = Math.atan2(this.y - lineCenterY, this.x - lineCenterX);
+					const lineEndX = lineCenterX + Math.cos(lineAngle) * lineLength;
+					const lineEndY = lineCenterY + Math.sin(lineAngle) * lineLength;
+
+					context.beginPath();
+					context.moveTo(lineCenterX, lineCenterY);
+					context.lineTo(lineEndX, lineEndY);
+					context.stroke();
+				}
+			}
+		}
+
+		// Get the canvas element
+		const canvas = document.getElementById("myCanvas");
+		const context = canvas.getContext("2d");
+
+		// Set canvas dimensions
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+
+		// Calculate center coordinates
+		const centerX = canvas.width / 2;
+		const centerY = canvas.height / 2;
+
+		// Create a circle object
+		const circle = new Circle(centerX, centerY, 150);
+
+		// Draw the circle
+		circle.draw(context);
+
+	</script>
+</body>
+
+</html>
+
+<!-- 
+	https://www.w3schools.com/graphics/tryit.asp?filename=trycanvas_clock_start - можно взять за основу. 
+https://ruseller.com/lessons.php?rub=2&id=904
+https://s-sd.ru/blog_studio_design/strelochnye_chasy_pri_pomowi_css3/
+https://translated.turbopages.org/proxy_u/en-ru.ru.8137d002-646625f9-3f537d22-74722d776562/https/www.geeksforgeeks.org/how-to-create-analog-clock-using-html-css-and-javascript/
+
+-->
